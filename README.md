@@ -17,9 +17,9 @@ Features:
 
 
 # How does this work?
-It takes the phone number which is should be same as Cowin Website.⋅⋅
-That same number sim card needs to be installed on your phone as well⋅⋅
-It will try to auto login as soon as session expires by reading OTP from SMS⋅⋅
+It takes the phone number which is should be same as Cowin Website.
+That same number sim card needs to be installed on your phone as well
+It will try to auto login as soon as session expires by reading OTP from SMS
 
 
 # Data Security
@@ -32,3 +32,13 @@ of off the shelf analytical software as well. It is purely a Cowin client.
 Debarko De
 
 ## This is a purely educational project
+
+
+# FAQ
+
+1. Why is SMS Permission needed?
+
+Since the Cowin session is valid only for 15 mins, the app retries to auto login
+everytime it get deauthorized. Hence the login is attempted by reading the OTP
+sms from your Messages. It will continue doing this until either the phone runs
+out of battery or you get a slot.
