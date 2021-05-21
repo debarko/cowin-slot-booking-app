@@ -38,7 +38,7 @@ Debarko De
 
 1. Why is SMS Permission needed?
 
-Since the Cowin session is valid only for 15 mins, the app retries to auto login
-everytime it get deauthorized. Hence the login is attempted by reading the OTP
-sms from your Messages. It will continue doing this until either the phone runs
-out of battery or you get a slot.
+   Since the Cowin session is valid only for 15 mins, the app retries to auto login
+   everytime it get deauthorized. Hence the login is attempted by reading the OTP
+   sms from your Messages. It will continue doing this until either the phone runs
+   out of battery or you get a slot.
