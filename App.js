@@ -656,20 +656,11 @@ const App = () => {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text>Select Beneficiary:</Text>
-              
-
               <RadioButton
                 selectedOption={selectBeneficiary}
                 onSelect={onSelect}
                 options={beneficiariesList}
               />
-
-
-
-
-
-
-
               <Text>{"\n"}</Text>
               <Pressable
                 disabled={selectBeneficiary == null}

@@ -16,8 +16,7 @@
     "react-native-date-picker": "^3.3.0",
     "react-native-dropdown": "^0.0.6",
     "react-native-keep-awake": "^4.0.0",
-    "react-native-markdown-display": "^7.0.0-alpha.2",
-    "react-native-simple-radio-button": "^2.7.4"
+    "react-native-markdown-display": "^7.0.0-alpha.2"
   },
   "devDependencies": {
     "@babel/core": "^7.14.2",
