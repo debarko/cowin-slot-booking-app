@@ -65,7 +65,6 @@ const App = () => {
     } else {
       setSelectBeneficiary(item);
     }
-    console.log(selectBeneficiary);
   };
 
   // Config
@@ -240,16 +239,20 @@ const App = () => {
           });
         }
         setBeneficiariesList(tbeneficiariesList);
-        console.log(response);
-        console.log(beneficiariesList);
         setBeneficiaryModalVisible(true);
       } else {
-        selectBeneficiary = 1;
+        setSelectBeneficiary({
+          text: response[0].name,
+          key: response[0].beneficiary_reference_id
+        });
+        startApptFetch();
       }
-      // TODO - Setup a function here to call this next one
-      // Call it from event and this above eles case
-      // apptFetch(apptFilters);
     })
+  };
+
+  let startApptFetch = () => {
+    setBeneficiaryModalVisible(0);
+    apptFetch(apptFilters);
   };
 
   let fetchBeneficiaries = () => {
@@ -655,7 +658,7 @@ const App = () => {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text>Select Beneficiary:</Text>
+              <Text>Whom are you booking for:</Text>
               <RadioButton
                 selectedOption={selectBeneficiary}
                 onSelect={onSelect}
@@ -665,7 +668,7 @@ const App = () => {
               <Pressable
                 disabled={selectBeneficiary == null}
                 style={[styles.button, styles.buttonClose]}
-                onPress={() => setBeneficiaryModalVisible(!beneficiaryModalVisible)}
+                onPress={startApptFetch}
               >
                 <Text style={styles.textStyle}>Select</Text>
               </Pressable>
