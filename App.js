@@ -9,14 +9,18 @@ import {
   Button,
   Alert,
   PermissionsAndroid,
+  Modal,
+  Pressable,
   useColorScheme,
   View,
   TextInput,
+  ColorPropType,
 } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import KeepAwake from 'react-native-keep-awake';
 import SmsListener from 'react-native-android-sms-listener';
 import Markdown from 'react-native-markdown-display';
+import RadioButton from './components/RadioButton';
 
 //TODO
 // Generate all the filter values
@@ -30,10 +34,14 @@ import Markdown from 'react-native-markdown-display';
 
 
 const App = () => {
-  const [pincodes, setPincodes] = React.useState();
-  const [mobile, setMobile] = React.useState();
+  const [pincodes, setPincodes] = React.useState('560076');
+  const [mobile, setMobile] = React.useState('9686085068');
   const [dateSelect, setDate] = React.useState(new Date());
   const [noOfDays, setNoOfDays] = React.useState('1');
+  const [selectBeneficiary, setSelectBeneficiary] = React.useState();
+  const [beneficiaryModalVisible, setBeneficiaryModalVisible] = React.useState(false);
+  const [copy, setCopy] = React.useState('');
+  const [beneficiariesList, setBeneficiariesList] = React.useState([]);
   
   const onChangePincodes = (enteredPincodes) => {
     setPincodes(enteredPincodes);
@@ -51,6 +59,15 @@ const App = () => {
     setNoOfDays(enteredNoOfDays);
   }
 
+  const onSelect = (item) => {
+    if (selectBeneficiary && selectBeneficiary.key === item.key) {
+      setSelectBeneficiary(null);
+    } else {
+      setSelectBeneficiary(item);
+    }
+    console.log(selectBeneficiary);
+  };
+
   // Config
   const base_url = 'https://cdn-api.co-vin.in/api';
   const public_mode = 0;
@@ -66,8 +83,9 @@ const App = () => {
     cycleCounter: 0
   }
   let markdownCopy = '** Results will show above **'
-  let [copy, setCopy] = React.useState('');
 
+
+  // UTIL Functions
   let prependCopy = (text) => {
     markdownCopy = text + '\n' + markdownCopy
     setCopy(markdownCopy);
@@ -204,8 +222,38 @@ const App = () => {
     return promiseToken;
   };
 
+  let beneficiariesHandling = () => {
+    fetchBeneficiaries()
+    .then(response => response.json())
+    .then(response => {
+      response = response.beneficiaries;
+      if (!response.length) {
+        Alert.alert("Please go to Cowin website and create Beneficiary.");
+        return;
+      }
+      if (response.length > 1) {
+        let tbeneficiariesList = []
+        for(i=0; i < response.length; i++) {
+          tbeneficiariesList.push({
+            text: response[i].name,
+            key: response[i].beneficiary_reference_id
+          });
+        }
+        setBeneficiariesList(tbeneficiariesList);
+        console.log(response);
+        console.log(beneficiariesList);
+        setBeneficiaryModalVisible(true);
+      } else {
+        selectBeneficiary = 1;
+      }
+      // TODO - Setup a function here to call this next one
+      // Call it from event and this above eles case
+      // apptFetch(apptFilters);
+    })
+  };
+
   let fetchBeneficiaries = () => {
-    fetch("https://cdn-api.co-vin.in/api/v2/appointment/beneficiaries", {
+    let beneficiaries = fetch(createURL("/v2/appointment/beneficiaries"), {
       "headers": {
         "accept": "application/json, text/plain, */*",
         "accept-language": "en-US,en;q=0.9",
@@ -225,6 +273,8 @@ const App = () => {
       "mode": "cors",
       "credentials": "include"
     });
+
+    return beneficiaries;
   };
 
   let apptFetch = (apptFilters) => {
@@ -373,7 +423,7 @@ const App = () => {
             .then(response => response.json())
             .then(response => {
               token = response.token;
-              apptFetch(apptFilters);
+              beneficiariesHandling();
             });
           }        
         });
@@ -538,7 +588,7 @@ const App = () => {
         <StatusBar />
         <KeepAwake />
         <View>
-          <Text>Pincodes</Text>
+          <Text style={styles.label}>Pincodes</Text>
           <TextInput
             style={styles.input}
             value={pincodes}
@@ -546,7 +596,7 @@ const App = () => {
             onChangeText={onChangePincodes} />
         </View>
         <View>
-          <Text>Mobile Number</Text>
+          <Text style={styles.label}>Mobile Number</Text>
           <TextInput
             style={styles.input}
             value={mobile}
@@ -554,7 +604,7 @@ const App = () => {
             onChangeText={onChangeMobile} />
         </View>
         <View>
-          <Text>Select start date?</Text>
+          <Text style={styles.label}>Select start date?</Text>
           <DatePicker 
             date={dateSelect}
             androidVariant="nativeAndroid"
@@ -563,7 +613,7 @@ const App = () => {
             />
         </View>
         <View>
-          <Text>Number of days to search for? (with and after above date)</Text>
+          <Text style={styles.label}>Number of days to search for? (with and after above date)</Text>
           <TextInput
             style={styles.input}
             value={noOfDays}
@@ -578,9 +628,59 @@ const App = () => {
             onPress={init}
           />
         </View>
-        <Markdown>
+        <Markdown 
+          style={{
+            body: {
+              color: '#c9d1d9', 
+              fontSize: 14,
+              backgroundColor: '#161b22',
+              marginTop: 10,
+              paddingLeft: 10,
+              borderWidth: 1,
+              borderColor: "#c9d1d9",
+              borderRadius: 5
+            }
+          }}
+        >
           {copy}
         </Markdown>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={beneficiaryModalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text>Select Beneficiary:</Text>
+              
+
+              <RadioButton
+                selectedOption={selectBeneficiary}
+                onSelect={onSelect}
+                options={beneficiariesList}
+              />
+
+
+
+
+
+
+
+              <Text>{"\n"}</Text>
+              <Pressable
+                disabled={selectBeneficiary == null}
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setBeneficiaryModalVisible(!beneficiaryModalVisible)}
+              >
+                <Text style={styles.textStyle}>Select</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -591,15 +691,55 @@ const styles = StyleSheet.create({
     height: 40,
     margin: 12,
     borderWidth: 1,
+    borderColor: "#c9d1d9"
   },
   container: {
     flex: 1,
     justifyContent: "space-around",
-    alignItems: "center"
+    alignItems: "center",
+    backgroundColor: "#0d1117",
+    paddingTop: 10
   },
   scrollview:{
     height: '100%'
-  }
+  },
+  label: {
+    color: '#c9d1d9'
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 10,
+    color: "#c9d1d9",
+    minWidth: 150,
+    backgroundColor: "#ccc",
+    borderRadius: 5,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 5,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
 });
 
 export default App;
