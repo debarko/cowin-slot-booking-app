@@ -188,7 +188,7 @@ const App = () => {
       },
       "referrer": "https://selfregistration.cowin.gov.in/",
       "referrerPolicy": "strict-origin-when-cross-origin",
-      "body": "{\"secret\":\"U2FsdGVkX1/MBQt7VwMJ0bJcs8ylYF/7gb5xh4MVghtdzui/tlbj0Lg9CbUBzAQKA16cGI2s4merLTECWUpK1w==\",\"mobile\":" + number + "}",
+      "body": "{\"secret\":\"U2FsdGVkX18fw2lNFFUS1gP60I5JVcMcnI81zqxA6tNp6PyontdyEqJwh0AXw9UtoHUga/np2dTNYXIsmXliYQ==\",\"mobile\":" + number + "}",
       "method": "POST",
       "mode": "cors"
     });
