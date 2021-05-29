@@ -7,7 +7,7 @@ export default function RadioButtons({ options, selectedOption, onSelect }) {
       {options.map((item) => {
         return (
           <View key={item.key} style={styles.buttonContainer}>
-            <Text>{item.text}</Text>
+            <Text style={styles.textFont}>{item.text}</Text>
             <TouchableOpacity
               style={styles.circle}
               onPress={() => {
@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 5,
+  },
+
+  textFont: {
+    color: '#ccc'
   },
 
   circle: {
